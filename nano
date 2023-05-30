@@ -1,0 +1,45 @@
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    server {
+        listen       80  ssl default_server;
+        listen       [::]:80  ssl default_server;
+        server_name  taliccampaigns.tataaia.com *.tataaia.com;
+        root         "C:/programfiles/nginx/html/build";
+        client_max_body_size 500M;
+        index        index.html index.htm index.nginx-debian.html;
+        ssl_certificate "C:/etc/nginx/ssl/tataaia-selfsigned.crt";
+        ssl_certificate_key "C:/etc/nginx/ssl/tataaia-selfsigned.key";
+
+        location /approver/ {
+            proxy_pass http://172.23.7.20/;
+            proxy_redirect off;
+            proxy_buffering off;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_set_header X-Forwarded-Port $server_port;
+            add_header Access-Control-Allow-Origin *;
+            client_max_body_size 500M;
+            include mime.types;
+            sub_filter '/static/'  '/approver/static/';
+            sub_filter '/static/media' '/approver/static/media/logo.20a9c1e26914c4c0b835.png';
+            sub_filter_once off;
+        }
+
+        location /backoffice/ {
+            proxy_pass http://172.23.7.21/;
+            proxy_redirect default;
+            proxy_buffering off;
+            client_max_body_size 500M;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_set_header X-Forwarded-Port $server_port;
+            add_header Access-Control-Allow-Origin *;
+            include mime.types;
+            sub_filter '/static/'  '/approver/static/';
+            sub_filter '/static/media' '/approver/static/media/logo.20a9c1e26914c4c0b835.png';
+            sub_filter_once off;
+        }
+    }
+}
