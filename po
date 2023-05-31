@@ -1,0 +1,3 @@
+foreach ($file in Get-ChildItem -Filter "*.zip") {
+    Expand-Archive -Path $file.FullName -DestinationPath (Join-Path -Path $PWD -ChildPath $file.BaseName)
+}
